@@ -3,6 +3,7 @@ package com.lgo.library
 import android.content.Context
 import android.content.SharedPreferences
 import android.nfc.Tag
+import android.os.AsyncTask
 import android.preference.PreferenceManager
 import android.util.Log
 import android.view.ViewGroup
@@ -15,6 +16,7 @@ import org.xwalk.core.XWalkWebResourceRequest
 import org.xwalk.core.XWalkView
 import org.xwalk.core.XWalkWebResourceResponse
 import org.xwalk.core.XWalkResourceClient
+import java.io.InputStream
 import java.io.PipedInputStream
 import java.io.PipedOutputStream
 import java.net.URL
@@ -73,12 +75,16 @@ class CrossWalkView {
                 val pipedInputStream = PipedInputStream()
                 val pipedOutputStream = PipedOutputStream(pipedInputStream)
 
-
                 val input = connection.getInputStream()
+
+                val file = cacheWoker?.buildMediaFilePath(request.url)
+                val tempFile = cacheWoker?.buildTempFilePath(request.url)
 
                 Log.i(TAG, "Cache File Start: " + request.url.toString())
 
                 Thread(){
+
+                    val fileOutputStream = cacheWoker?.storage?.writeFileOutputStream(tempFile!!)
 
                     input.use { _ ->
                         pipedOutputStream.use { _ ->
@@ -88,11 +94,19 @@ class CrossWalkView {
 
                             }
                         }
+
+                        fileOutputStream.use { _ ->
+                            try {
+                                input.copyTo(fileOutputStream!!)
+                            }catch (ex: Exception){
+                                fileOutputStream?.close()
+                            }
+                        }
                     }
 
-                }.start()
+                    cacheWoker?.storage?.move(tempFile!!, file!!)
 
-                Log.i(TAG, "return input stream")
+                }.start()
 
                 xWalkWebResourceResponse = createXWalkWebResourceResponse("",
                                         "", pipedInputStream)
