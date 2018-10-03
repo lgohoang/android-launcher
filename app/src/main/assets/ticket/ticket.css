@@ -1,0 +1,77 @@
+
+/* Print CSS */
+@page {
+    size: auto; 
+    margin: 0px;
+}
+
+body {
+    margin-left: -20pt;
+    padding: 0 18pt 0 18pt;
+    font-family: sans-serif;
+    text-rendering: optimizeLegibility;
+}
+
+.ql-align-center {
+    text-align: center;
+}
+
+img {
+    width: auto;
+    height: auto;
+    max-width: 204pt;
+    min-width: 28pt;
+    margin: auto;
+}
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p {
+    display: block;
+    margin: auto;
+}
+
+h1{
+    font-size: 56pt;
+}
+
+h2{
+    font-size: 51pt;
+}
+
+h3{
+    font-size: 39pt;
+}
+
+h4{
+    font-size: 22pt;
+}
+
+h5{
+    font-size: 17pt;
+}
+
+h6{
+    font-size: 8pt;
+}
+
+p{
+    
+}
+
+#main {
+    height: auto;
+    width: 100%;
+}
+
+hr.line {
+    display: block;
+    height: 1px;
+    background: transparent;
+    width: 100%;
+    border: none;
+    border-top: solid 1px black;
+}
