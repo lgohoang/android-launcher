@@ -1,19 +1,26 @@
 package com.lgo.library.XWalk
 
 import android.content.Context
+import android.content.Intent
 import android.content.SharedPreferences
 import android.nfc.Tag
 import android.os.AsyncTask
 import android.os.Handler
 import android.os.Looper
 import android.preference.PreferenceManager
+import android.support.v4.content.ContextCompat.startActivity
+import android.support.v7.app.AppCompatActivity
 import android.util.Log
+import android.view.MotionEvent
+import android.view.View
 import android.view.ViewGroup
 import android.webkit.URLUtil
 import android.webkit.WebSettings
 import android.webkit.WebView
 import android.widget.Toast
+import com.lgo.launcher.MainActivity
 import com.lgo.launcher.R
+import com.lgo.launcher.SettingsActivity
 import com.lgo.library.XWalk.Cache
 import org.jsoup.helper.HttpConnection
 import org.xwalk.core.*
@@ -60,6 +67,36 @@ class XView {
         //Xwalk Init
         xWalkView = XWalkView(context)
         xWalkView?.layoutParams = viewGroup?.layoutParams
+
+        val countToStart = 3
+        var count = 0
+        var startMillis: Long = 0
+
+        xWalkView?.setOnTouchListener(View.OnTouchListener { view, motionEvent ->
+            val action = motionEvent.action
+            if (action == MotionEvent.ACTION_UP) {
+                //get system current milliseconds
+                val time = System.currentTimeMillis()
+
+
+                //if it is the first time, or if it has been more than 3 seconds since the first tap ( so it is like a new try), we reset everything
+                if (startMillis == 0L || time - startMillis > 1000) {
+                    startMillis = time
+                    count = 1
+                } else { //  time-startMillis< 3000
+                    count++
+                }//it is not the first, and it has been  less than 3 seconds since the first
+
+                if (count == countToStart) {
+                    val intent = Intent(context, SettingsActivity::class.java)
+                    startActivity(context, intent, null)
+                }
+
+                return@OnTouchListener false
+            }
+
+            false
+        })
 
         xWalkView?.setResourceClient(object: XWalkResourceClient(xWalkView){
             override fun shouldInterceptLoadRequest(view: XWalkView?, request: XWalkWebResourceRequest?): XWalkWebResourceResponse? {

@@ -167,6 +167,27 @@ class MainActivity : AppCompatActivity() {
         return super.dispatchTouchEvent(ev)
     }
 
+//    override fun onTouchEvent(event: MotionEvent?): Boolean {
+//        val eventaction = event?.getAction()
+//        if (eventaction == MotionEvent.ACTION_UP) {
+//            //get system current milliseconds
+//            val time = System.currentTimeMillis()
+//            //if it is the first time, or if it has been more than 3 seconds since the first tap ( so it is like a new try), we reset everything
+//            if (startMillis == 0L || time - startMillis > 1000) {
+//                startMillis = time
+//                count = 1
+//            } else { //  time-startMillis< 3000
+//                count++
+//            }//it is not the first, and it has been  less than 3 seconds since the first
+//            if (count == countToStart) {
+//                //do whatever you need
+//                startActivity(Intent(applicationContext(), SettingsActivity::class.java))
+//            }
+//            return true
+//        }
+//        return false
+//    }
+
     private fun hideSystemUI() {
         // Enables regular immersive mode.
         // For "lean back" mode, remove SYSTEM_UI_FLAG_IMMERSIVE.
