@@ -6,6 +6,7 @@ import android.os.Environment
 import android.util.Log
 import android.webkit.URLUtil
 import android.widget.Toast
+import org.chromium.base.FileUtils
 import java.io.*
 import java.net.URL
 import java.nio.channels.Channels
@@ -44,7 +45,9 @@ class Storage {
 
             Location.External -> {
                 if (checkExternalMounted()){
-                    dir = File(Environment.getExternalStorageDirectory(), cacheDir)
+                    val external = System.getenv("EXTERNAL_STORAGE")
+                    val filesDir = File(external, "android/data/${context?.packageName}")
+                    dir = File(filesDir, cacheDir)
                 }else{
                     Toast.makeText(context, "External storage unmounted", Toast.LENGTH_LONG).show()
                     dir = File(context?.filesDir, cacheDir)
@@ -103,22 +106,6 @@ class Storage {
     }
 
 
-    fun download(link: String, file: File){
-
-        doAsync{
-            val file = File(this.dir, file.toString())
-            val input = URL(link).openStream()
-            val output = FileOutputStream(file)
-
-            input.use { _ ->
-                output.use { _ ->
-                    input.copyTo(output)
-                }
-            }
-
-        }
-    }
-
     fun move(file: File, dest: File){
         val f = File(this.dir, file.toString())
         val d = File(this.dir, dest.toString())
@@ -131,10 +118,8 @@ class Storage {
         f.renameTo(d)
     }
 
-    fun readFileInputStream(file: File): InputStream? {
+    fun readFileInputStream(file: File): FileInputStream? {
         val f = File(this.dir, file.toString())
-
-
 
         if (f.exists()){
             f.setLastModified(Calendar.getInstance().timeInMillis)
@@ -147,6 +132,10 @@ class Storage {
     fun checkFileExists(file: File): Boolean {
         val f = File(this.dir, file.toString())
         return f.exists()
+    }
+
+    fun deleteCacheFolder(){
+        FileUtils.recursivelyDeleteFile(this.dir)
     }
 
     fun cleanUpStorage(file: File){

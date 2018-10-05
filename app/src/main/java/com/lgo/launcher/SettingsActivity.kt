@@ -54,7 +54,8 @@ class SettingsActivity : AppCompatPreferenceActivity() {
         when (item?.getItemId()) {
             // Respond to the action bar's Up/Home button
             android.R.id.home->{
-                super.onBackPressed()
+                startActivity(Intent(this, MainActivity::class.java))
+                finish()
                 return true
             }
         }
@@ -96,6 +97,7 @@ class SettingsActivity : AppCompatPreferenceActivity() {
             // guidelines.
             bindPreferenceSummaryToValue(findPreference("url"))
             bindPreferenceSummaryToValue(findPreference("application_list"))
+            bindPreferenceSummaryToValue(findPreference("screen_orientation_list"))
         }
 
         override fun onOptionsItemSelected(item: MenuItem): Boolean {

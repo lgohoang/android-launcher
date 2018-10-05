@@ -2,6 +2,8 @@ package com.lgo.launcher
 
 import android.content.res.Configuration
 import android.os.Bundle
+import android.os.Environment
+import android.os.Process
 import android.preference.PreferenceActivity
 import android.support.annotation.LayoutRes
 import android.support.v7.app.ActionBar
@@ -10,6 +12,8 @@ import android.support.v7.widget.Toolbar
 import android.view.MenuInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
+import com.lgo.library.Storage
 
 /**
  * A [android.preference.PreferenceActivity] which implements and proxies the necessary calls
@@ -89,11 +93,22 @@ abstract class AppCompatPreferenceActivity : PreferenceActivity() {
     }
 
     override fun onHeaderClick(header: PreferenceActivity.Header, position: Int) {
-
-        if (header.id.equals(R.id.restart.toLong())) {
-            System.exit(0)
-        }
-
         super.onHeaderClick(header, position)
+        when(header.id){
+            R.id.restart.toLong() ->{
+                System.exit(0)
+            }
+
+            R.id.exit.toLong() -> {
+                finish()
+                moveTaskToBack(true)
+                Process.killProcess(Process.myPid())
+            }
+
+            R.id.delete_cache_folder.toLong() -> {
+                val storage = Storage(this, Storage.Location.External)
+                storage.deleteCacheFolder()
+            }
+        }
     }
 }

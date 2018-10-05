@@ -26,7 +26,6 @@
     </string-array>
 
 
-
     <string name="pref_title_social_recommendations">Enable social recommendations</string>
     <string name="pref_description_social_recommendations">Recommendations for people to contact
         based on your message history
@@ -83,4 +82,25 @@
     <string name="pref_ringtone_silent">Silent</string>
 
     <string name="pref_title_vibrate">Vibrate</string>
+
+
+    <string-array name="pref_screen_orientation_list_titles">
+        <item>Potrait</item>
+        <item>ReversePotrait</item>
+        <item>Landscape</item>
+        <item>Reverse Landscape</item>
+        <item>Behind</item>
+        <item>Sensor</item>
+
+    </string-array>
+    <string-array name="pref_screen_orientation_list_values">
+        <item>1</item>
+        <item>9</item>
+        <item>0</item>
+        <item>8</item>
+        <item>3</item>
+        <item>4</item>
+    </string-array>
+    <string name="title_activity_switch">SwitchActivity</string>
+
 </resources>

@@ -5,11 +5,12 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".MainActivity">
-<FrameLayout
+
+<RelativeLayout
     android:id="@+id/layout"
     android:layout_width="match_parent"
-    android:background="@android:color/holo_red_dark"
     android:layout_height="match_parent">
-</FrameLayout>
+
+</RelativeLayout>
 
 </android.support.constraint.ConstraintLayout>

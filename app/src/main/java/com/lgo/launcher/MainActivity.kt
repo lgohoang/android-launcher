@@ -6,23 +6,26 @@ import android.content.SharedPreferences
 import android.support.v7.app.AppCompatActivity
 import android.os.*
 import android.preference.PreferenceManager
+import android.support.design.widget.FloatingActionButton
 import android.util.Log
 import android.view.*
 import android.support.v4.view.GestureDetectorCompat
 import android.view.MotionEvent
-import com.lgo.library.CrossWalkView
+import android.widget.Button
+import android.widget.TextView
 import com.lgo.library.GestureListener
-import com.lgo.library.XWebView
+import com.lgo.library.XWalk.XView
+import com.lgo.library.doAsync
 import java.lang.Exception
 
 
 class MainActivity : AppCompatActivity() {
 
     private val TAG = "Main"
-    private var mDetector: GestureDetectorCompat? = null
-    private var setting: SharedPreferences? = null
-
-    var autoHide: Boolean = false
+    private lateinit var mDetector: GestureDetectorCompat
+    private lateinit var setting: SharedPreferences
+    private lateinit var xWalkView: XView
+    private lateinit var url: String
 
     init {
         instance = this
@@ -41,11 +44,50 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        setting = PreferenceManager.getDefaultSharedPreferences(this)
 
+        //Init var
+        setting = PreferenceManager.getDefaultSharedPreferences(this)
         mDetector = GestureDetectorCompat(this, GestureListener())
 
+        //Init setting
+        initSetting()
+//
+//        val settingCount = 0
+//        var index = 6
 
+
+
+
+
+//        Thread(){
+//
+//            val handler = Handler(Looper.getMainLooper())
+//
+//            while (index > settingCount){
+//                handler.post {
+//                    textView.text = index.toString()
+//                }
+//                index--
+//                Thread.sleep(1000)
+//            }
+//
+//            handler.post {
+//                xWalkView.show()
+//                xWalkView.loadUrl(url)
+//            }
+//        }.start()
+
+        xWalkView.show()
+        xWalkView.loadUrl(url)
+
+    }
+
+    fun initSetting(){
+        //Screen orientation setting
+        val screenOrientationSetting = setting!!.getString("screen_orientation_list", "0")
+        setRequestedOrientation(Integer.parseInt(screenOrientationSetting))
+
+        //System UI setting
         if (setting!!.getBoolean("auto_fullscreen", false)){
             window.decorView.setOnSystemUiVisibilityChangeListener { visibility ->
                 Log.i(TAG, "visibility: " + visibility)
@@ -55,22 +97,17 @@ class MainActivity : AppCompatActivity() {
             }
             hideSystemUI()
         }
-        try {
-            val viewGroup: ViewGroup = findViewById(R.id.layout) as ViewGroup
-//            val xWebView = XWebView(this, viewGroup)
-//            xWebView.loadUrl(loadUrl())
-            val crossWalkView: CrossWalkView = CrossWalkView(this, viewGroup)
-            crossWalkView.loadUrl(loadUrl())
 
-        }catch (ex: Exception){
-            throw ex
-        }
+        //WebView Setting
+        val viewGroup: ViewGroup = findViewById(R.id.layout) as ViewGroup
+        xWalkView = XView(context = this, viewGroup = viewGroup)
 
+        //Init application
+        initApplication()
     }
 
-    fun loadUrl(): String {
-        var address = setting!!.getString("url", "http://miraway.vn")
-
+    fun initApplication() {
+        url = setting!!.getString("url", "http://miraway.vn")
         val appIndex = setting!!.getString("application_list", "0").toInt()
         val app = this.resources.getTextArray(R.array.pref_application_list_titles)
 
@@ -84,25 +121,49 @@ class MainActivity : AppCompatActivity() {
             }
 
             "Kiosk" -> {
-                address += "/device/#/kiosk"
+                url += "/device/#/kiosk"
             }
             "Screen" -> {
-                address += "/device/#/screen"
+                url += "/device/#/screen"
             }
             "Feedback" -> {
-                address += "/device/#/feedback"
+                url += "/device/#/feedback"
             }
             "Counter" -> {
-                address += "/app/#/counter"
+                url += "/app/#/counter"
             }
             else -> {
             }
         }
-        return address
     }
 
+    private val countToStart = 3
+    private var count = 0
+    private var startMillis: Long = 0
+
     override fun dispatchTouchEvent(ev: MotionEvent?): Boolean {
-        mDetector?.onTouchEvent(ev)
+
+        val action = ev?.action
+
+        if (action == MotionEvent.ACTION_UP){
+            //get system current milliseconds
+            val time = System.currentTimeMillis()
+
+            //if it is the first time, or if it has been more than 3 seconds since the first tap ( so it is like a new try), we reset everything
+            if (startMillis == 0L || time - startMillis > 1000) {
+                startMillis = time
+                count = 1
+            } else { //  time-startMillis< 3000
+                count++
+            }//it is not the first, and it has been  less than 3 seconds since the first
+
+            if (count == countToStart) {
+                startActivity(Intent(applicationContext(), SettingsActivity::class.java))
+            }
+            return false
+        }
+
+//        mDetector?.onTouchEvent(ev)
         return super.dispatchTouchEvent(ev)
     }
 

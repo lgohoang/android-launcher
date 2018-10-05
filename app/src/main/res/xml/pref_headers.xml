@@ -4,22 +4,26 @@
 
     <header
         android:fragment="com.lgo.launcher.SettingsActivity$GeneralPreferenceFragment"
-        android:icon="@drawable/ic_info_black_24dp"
         android:title="@string/pref_header_general" />
 
     <header
-        android:icon="@drawable/ic_info_black_24dp"
         android:title="Browser" />
 
     <header
         android:fragment="com.lgo.launcher.SettingsActivity$NotificationPreferenceFragment"
-        android:icon="@drawable/ic_notifications_black_24dp"
         android:title="Launcher" />
 
     <header
-        android:id="@+id/restart"
-        android:icon="@drawable/ic_sync_black_24dp"
-        android:title="Restart application" />
+        android:id="@+id/delete_cache_folder"
+        android:title="Delete Cache Folder" />
+
+    <header
+    android:id="@+id/restart"
+    android:title="Restart application" />
+
+    <header
+        android:id="@+id/exit"
+        android:title="Exit application" />
 
 
 </preference-headers>
