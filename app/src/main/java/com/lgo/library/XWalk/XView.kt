@@ -68,37 +68,8 @@ class XView {
         xWalkView = XWalkView(context)
         xWalkView?.layoutParams = viewGroup?.layoutParams
 
-        val countToStart = 3
-        var count = 0
-        var startMillis: Long = 0
-
-        xWalkView?.setOnTouchListener(View.OnTouchListener { view, motionEvent ->
-            val action = motionEvent.action
-            if (action == MotionEvent.ACTION_UP) {
-                //get system current milliseconds
-                val time = System.currentTimeMillis()
-
-
-                //if it is the first time, or if it has been more than 3 seconds since the first tap ( so it is like a new try), we reset everything
-                if (startMillis == 0L || time - startMillis > 1000) {
-                    startMillis = time
-                    count = 1
-                } else { //  time-startMillis< 3000
-                    count++
-                }//it is not the first, and it has been  less than 3 seconds since the first
-
-                if (count == countToStart) {
-                    val intent = Intent(context, SettingsActivity::class.java)
-                    startActivity(context, intent, null)
-                }
-
-                return@OnTouchListener false
-            }
-
-            false
-        })
-
         xWalkView?.setResourceClient(object: XWalkResourceClient(xWalkView){
+
             override fun shouldInterceptLoadRequest(view: XWalkView?, request: XWalkWebResourceRequest?): XWalkWebResourceResponse? {
                 Log.i(TAG, "Request ${request?.url.toString()}")
                 //skip request
@@ -123,7 +94,7 @@ class XView {
                             Toast.makeText(context, "Request ${request.url} from storage", Toast.LENGTH_LONG).show()
                         }
                         responseHeader.put("X-Status", "From Storage")
-                        webResourceResponse = createXWalkWebResourceResponse(connection.contentType, connection.contentEncoding,
+                        webResourceResponse = createXWalkWebResourceResponse("", "",
                                 cache!!.readFile(file))
                         webResourceResponse?.responseHeaders = responseHeader
                         return webResourceResponse
@@ -135,7 +106,7 @@ class XView {
                         }
                         val input = cache!!.cacheOnInputStream(connection.getInputStream(), file, request.url.toString())
                         responseHeader.put("X-Status", "Caching & Forward")
-                        webResourceResponse = createXWalkWebResourceResponse(connection.contentType, connection.contentEncoding,
+                        webResourceResponse = createXWalkWebResourceResponse("", "",
                                 input)
                         webResourceResponse?.responseHeaders = responseHeader
                         return webResourceResponse
